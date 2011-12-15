@@ -18,6 +18,7 @@ class Kohana_Gravatar {
 	const GRAVATAR_PG  = 'PG';
 	const GRAVATAR_R   = 'R';
 	const GRAVATAR_X   = 'X';
+    var $width_padrao = 60;
 
 	/**
 	 * Static instances
@@ -86,22 +87,27 @@ class Kohana_Gravatar {
 	 */
 	protected function __construct($email, $config = NULL)
 	{
+
 		// Set the email address
 		$this->email = $email;
 
 		if (empty($config))
 		{
-			$this->_config = Kohana::config('gravatar.default');
+			// v3.1 $this->_config = Kohana::config('gravatar.default');
+            $this->_config = Kohana::$config->load('gravatar')->default;
 		}
 		elseif (is_array($config))
 		{
 			// Setup the configuration
-			$config += Kohana::config('gravatar.default');
+			// v3.1 $config += Kohana::config('gravatar.default');
+            $config += Kohana::$config->load('gravatar')->default;;
+            
 			$this->_config = $config;
 		}
 		elseif (is_string($config))
 		{
-			if ($config = Kohana::config('gravatar.'.$config) === NULL)
+			// v3.1 if ($config = Kohana::config('gravatar.'.$config) === NULL)
+            if ($config = Kohana::$config->load('gravatar.')->$config === NULL)
 			{
 				throw new Kohana_Gravatar_Exception('Gravatar.__construct() , Invalid configuration group name : :config', array(':config' => $config));
 			}
@@ -221,6 +227,7 @@ class Kohana_Gravatar {
 		}
 
 		$data['attr']['alt'] = $this->_process_alt();
+        $data['attr']['width'] = $this->width_padrao;
 
 		if ( ! $view)
 		{
